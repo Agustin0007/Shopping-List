@@ -1,14 +1,21 @@
-import { useState } from 'react' // Importamos el hook useState para el manejo de estado
-// Importamos los componentes necesarios
+import { useState, useEffect } from 'react' // Importamos los hooks necesarios
 import { ShoppingForm } from './components/ShoppingForm'
 import { ShoppingList } from './components/ShoppingList'
 import { ShoppingHeader } from './components/ShoppingHeader'
-import './App.css' // Importamos los estilos
+import './App.css'
 
 export function App() {
   // Estado principal para almacenar todos los items de la lista
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState(() => {
+    const savedItems = localStorage.getItem('shoppingItems')
+    return savedItems ? JSON.parse(savedItems) : []
+  })
   
+  // Efecto para guardar los items en localStorage cuando cambien
+  useEffect(() => {
+    localStorage.setItem('shoppingItems', JSON.stringify(items))
+  }, [items])
+
   // Función para agregar un nuevo item a la lista
   const addItem = (newItem) => {
     setItems(prevItems => [...prevItems, { ...newItem, id: Date.now() }])
